@@ -13,7 +13,7 @@ import {
 } from './data/dashboard.js'
 import './App.css'
 
-function Icon({ name, size = 20 }) {
+function Icon({ name, size = 20, strokeWidth = 1.7 }) {
   const paths = {
     grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
     book: 'M4 3h13a2 2 0 0 1 2 2v16H6a3 3 0 0 1-3-3V5a2 2 0 0 1 1-2 M3 17h16 M7 7h8 M7 10h6',
@@ -29,6 +29,8 @@ function Icon({ name, size = 20 }) {
     print: 'M6 9V3h12v6 M6 17H3V9h18v8h-3 M6 14h12v7H6z M17 12h1',
     shield: 'm12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z m-4 9 3 3 5-5',
     close: 'm6 6 12 12 M6 18 18 6',
+    reload: 'M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8 M21 3v5h-5',
+    bell: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21a2 2 0 0 0 4 0',
   }
   return (
     <svg
@@ -37,7 +39,7 @@ function Icon({ name, size = 20 }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.7"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -93,6 +95,7 @@ function App() {
     : null
   const priorities = getChairPriorities(rows)
   const reviewPriorityCount = priorities.filter((priority) => priority.status === 'review').length
+  const priorityReviewLabel = `${reviewPriorityCount} ${reviewPriorityCount === 1 ? 'priority needs' : 'priorities need'} review`
 
   function showDetails(id) {
     setDetail(id)
@@ -109,20 +112,65 @@ function App() {
       <a className="skip-link" href="#main">
         Skip to dashboard
       </a>
+      <header className="brand-header">
+        <div className="brand-header-inner">
+          <a className="chairview-brand" href="#main" aria-label="ChairView dashboard">
+            <img src="/chairview-logo.png" width="54" height="54" alt="" />
+            <span>
+              <strong>ChairView</strong>
+              <span>Academic Analytics Dashboard</span>
+            </span>
+          </a>
+          <div className="brand-context">
+            <span className="brand-period">A.Y. {academicYear}</span>
+            <a
+              className="brand-notifications"
+              href="#chair-priorities"
+              aria-label={`${priorityReviewLabel}. View Program Chair priorities`}
+              title={priorityReviewLabel}
+            >
+              <Icon name="bell" size={23} />
+              <span
+                className={`notification-badge${reviewPriorityCount === 0 ? ' is-clear' : ''}`}
+                aria-hidden="true"
+              >
+                {reviewPriorityCount}
+              </span>
+            </a>
+            <div className="brand-role">
+              <span className="brand-avatar" aria-hidden="true">PC</span>
+              <div>
+                <strong>Program Chair</strong>
+                <span>BS Information Technology</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
       <div className="workspace">
         <main id="main">
           <div className="page-heading">
-            <span className="university-mark">
-              <Icon name="cap" size={31} />
-            </span>
             <div>
               <div className="eyebrow">
                 BATANGAS STATE UNIVERSITY · ARASOF NASUGBU
               </div>
-              <h1>BatStateU Academic Insights</h1>
+              <h1>Academic Analytics Overview</h1>
               <p>Program Chair · BSIT / CICS</p>
             </div>
-            <div className="header-actions">
+          </div>
+          <div className="report-toolbar">
+            <div
+              className="section-caption"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span>
+                <strong>{period.semester} · AY {period.year}</strong> · {scope} ·{' '}
+                {summary.students} students
+              </span>
+            </div>
+            <div className="report-actions">
               <span className="sample-badge">Simulated data</span>
               <button
                 className="button print-button"
@@ -189,6 +237,7 @@ function App() {
               }}
               disabled={periodId === '2026-2027-1' && yearLevel === 'all'}
             >
+              <Icon name="reload" size={17} />
               Reset filters
             </button>
             <div
@@ -231,7 +280,7 @@ function App() {
                     <span
                       className={`kpi-icon ${warning ? 'needs-review' : ''}`}
                     >
-                      <Icon name={kpi.icon} size={22} />
+                      <Icon name={kpi.icon} size={21} />
                     </span>
                   </div>
                   <h2>{kpi.label}</h2>
@@ -254,23 +303,12 @@ function App() {
               )
             })}
           </section>
-          <div
-            className="section-caption"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <span>
-              <strong>{period.semester} · AY {period.year}</strong> · {scope} ·{' '}
-              {summary.students} students
-            </span>
-          </div>
-          <section className="chair-priorities" aria-labelledby="chair-priorities-title">
+          <section className="chair-priorities" id="chair-priorities" aria-labelledby="chair-priorities-title">
             <div className="priority-heading">
               <div>
                 <h2 id="chair-priorities-title">Program Chair priorities</h2>
                 <p className="priority-period">
-                  {reviewPriorityCount} {reviewPriorityCount === 1 ? 'priority needs' : 'priorities need'} review
+                  {priorityReviewLabel}
                 </p>
               </div>
             </div>

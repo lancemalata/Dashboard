@@ -93,6 +93,23 @@ export const periods = [
       [4.25, 4.2, 4.125],
     ),
   },
+  {
+    // Additional simulated scenario; the paper's first-semester examples remain unchanged.
+    id: '2026-2027-2',
+    year: '2026-2027',
+    semester: 'Second semester',
+    shortLabel: '26–27 · S2',
+    order: 4,
+    rows: makeRows(
+      [
+        [120, 570, 10, 12, 12, 480],
+        [110, 510, 12, 10, 10, 420],
+        [100, 455, 13, 10, 9, 360],
+        [90, 390, 15, 8, 7, 300],
+      ],
+      [4.35, 4.3, 4.2],
+    ),
+  },
 ]
 
 export function selectRows(period, yearLevel = 'all') {

@@ -14,8 +14,10 @@ import {
   getChairPriorities,
 } from '../src/data/dashboard.js'
 
+const paperPeriod = periods.find((period) => period.id === '2026-2027-1')
+
 test('default reporting scenario reproduces the five paper examples', () => {
-  const summary = summarize(periods.at(-1).rows)
+  const summary = summarize(paperPeriod.rows)
   assert.deepEqual(getMetrics(summary), {
     passRate: 88,
     onTimeRate: 90,
@@ -65,7 +67,7 @@ test('every simulated cohort respects academic and evaluation count bounds', () 
 })
 
 test('year-level filtering recalculates all KPIs from only the selected cohort', () => {
-  const period = periods.at(-1)
+  const period = paperPeriod
   const rows = selectRows(period, '4')
   assert.equal(rows.length, 1)
   assert.equal(rows[0].level, 4)
@@ -138,7 +140,7 @@ test('missing denominators produce unavailable KPIs without performance warnings
 
 test('alerts change across periods and a good mean rating does not erase low participation', () => {
   assert.equal(getWarnings(getMetrics(summarize(periods[0].rows))).length, 0)
-  const warnings = getWarnings(getMetrics(summarize(periods.at(-1).rows)))
+  const warnings = getWarnings(getMetrics(summarize(paperPeriod.rows)))
   assert.deepEqual(
     warnings.map((item) => item.id),
     ['passRate', 'onTimeRate', 'responseRate', 'difficultyRate'],
@@ -147,7 +149,7 @@ test('alerts change across periods and a good mean rating does not erase low par
 })
 
 test('chair priorities use the selected cohort counts and distinguish late records from missing grades', () => {
-  const priorities = getChairPriorities(periods.at(-1).rows)
+  const priorities = getChairPriorities(paperPeriod.rows)
   assert.equal(priorities[0].level, 4)
   assert.ok(priorities[0].evidence.includes('81.3%'))
   assert.ok(priorities[0].evidence.includes('20 of 90'))
@@ -157,7 +159,7 @@ test('chair priorities use the selected cohort counts and distinguish late recor
   assert.ok(priorities[2].evidence.includes('1,260 / 2,100'))
   assert.ok(priorities[2].evidence.includes('60.0%'))
 
-  const yearThree = getChairPriorities(selectRows(periods.at(-1), '3'))
+  const yearThree = getChairPriorities(selectRows(paperPeriod, '3'))
   assert.equal(yearThree[0].level, 3)
   assert.ok(yearThree[0].evidence.includes('17 of 100'))
   assert.ok(yearThree[1].evidence.includes('1 of 10'))
@@ -189,13 +191,13 @@ test('card comparisons respect metric direction, percentage-point units and miss
   assert.equal(getKpiComparison(pass, 88, null).direction, 'unavailable')
   assert.equal(getKpiComparison(pass, null, 90).direction, 'unavailable')
   assert.equal(getKpiComparison(rating, 4.2, 4.200001).direction, 'unchanged')
-  const summary = summarize(periods.at(-1).rows)
+  const summary = summarize(paperPeriod.rows)
   assert.ok(getKpiCount('difficultyRate', summary).includes('63 / 420 students'))
   assert.ok(getKpiCount('responseRate', summary).includes('1,260 / 2,100'))
 })
 
 test('priority metrics and target gaps use the same cohort and correct target direction', () => {
-  const [academic, submission, teaching] = getChairPriorities(periods.at(-1).rows)
+  const [academic, submission, teaching] = getChairPriorities(paperPeriod.rows)
   assert.equal(academic.metric.label, 'Academic difficulty rate')
   assert.ok(Math.abs(academic.metric.value - (20 / 90) * 100) < 1e-10)
   assert.ok(Math.abs(academic.metric.gap - ((20 / 90) * 100 - 10)) < 1e-10)
@@ -208,4 +210,25 @@ test('priority metrics and target gaps use the same cohort and correct target di
   assert.equal(teaching.metric.gapDirection, 'below')
   assert.ok(getChairPriorities(periods[0].rows).every((item) => item.metric.gap === 0))
   assert.ok(getChairPriorities([{ level: 1, ...summarize([]) }]).every((item) => item.metric.gap === null))
+})
+
+test('both academic years offer two semesters with separate cohort results', () => {
+  for (const year of new Set(periods.map((period) => period.year))) {
+    const terms = periods.filter((period) => period.year === year)
+    assert.deepEqual(terms.map((period) => period.semester), ['First semester', 'Second semester'])
+    assert.ok(terms[0].order < terms[1].order)
+  }
+
+  const secondSemester = periods.find((period) => period.id === '2026-2027-2')
+  const summary = summarize(selectRows(secondSemester))
+  assert.equal(summary.students, 420)
+  assert.equal(summary.passed, 1925)
+  assert.equal(summary.responses, 1560)
+  assert.equal(getMetrics(summary).onTimeRate, 95)
+  assert.notDeepEqual(getMetrics(summary), getMetrics(summarize(paperPeriod.rows)))
+
+  const yearFour = getMetrics(summarize(selectRows(secondSemester, '4')))
+  assert.equal(yearFour.passRate, (390 / 450) * 100)
+  assert.equal(yearFour.responseRate, (300 / 450) * 100)
+  assert.ok(getChairPriorities(secondSemester.rows).every((priority) => priority.metric.value !== null))
 })

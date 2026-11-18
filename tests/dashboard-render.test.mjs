@@ -16,6 +16,7 @@ test('dashboard renders the required five cards, three charts, filters and conte
     assert.equal((html.match(/class="kpi-card"/g) || []).length, 5)
     assert.equal((html.match(/role="img"/g) || []).length, 3)
     assert.equal((html.match(/<select/g) || []).length, 3)
+    assert.ok(html.includes('<option value="2026-2027-2">Second semester</option>'))
     assert.equal((html.match(/class="alert-row"/g) || []).length, 0)
     for (const value of ['88.0%', '90.0%', '60.0%', '4.20', '15.0%'])
       assert.ok(html.includes(value))
