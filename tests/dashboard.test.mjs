@@ -9,6 +9,9 @@ import {
   getWarnings,
   selectRows,
   formatValue,
+  getKpiCount,
+  getKpiComparison,
+  getChairPriorities,
 } from '../src/data/dashboard.js'
 
 test('default reporting scenario reproduces the five paper examples', () => {
@@ -141,4 +144,68 @@ test('alerts change across periods and a good mean rating does not erase low par
     ['passRate', 'onTimeRate', 'responseRate', 'difficultyRate'],
   )
   assert.equal(formatValue(4.2, 'rating'), '4.20')
+})
+
+test('chair priorities use the selected cohort counts and distinguish late records from missing grades', () => {
+  const priorities = getChairPriorities(periods.at(-1).rows)
+  assert.equal(priorities[0].level, 4)
+  assert.ok(priorities[0].evidence.includes('81.3%'))
+  assert.ok(priorities[0].evidence.includes('20 of 90'))
+  assert.ok(priorities[0].evidence.includes('22.2%'))
+  assert.ok(priorities[1].evidence.includes('4 of 40'))
+  assert.match(kpis.find((kpi) => kpi.id === 'onTimeRate').context, /all grades.*finalized/i)
+  assert.ok(priorities[2].evidence.includes('1,260 / 2,100'))
+  assert.ok(priorities[2].evidence.includes('60.0%'))
+
+  const yearThree = getChairPriorities(selectRows(periods.at(-1), '3'))
+  assert.equal(yearThree[0].level, 3)
+  assert.ok(yearThree[0].evidence.includes('17 of 100'))
+  assert.ok(yearThree[1].evidence.includes('1 of 10'))
+})
+
+test('cohort review is not hidden by an overall academic rate within target', () => {
+  const period = periods[1]
+  assert.ok(getMetrics(summarize(period.rows)).difficultyRate < 10)
+  const academic = getChairPriorities(period.rows)[0]
+  assert.equal(academic.status, 'review')
+  assert.equal(academic.level, 4)
+  assert.ok(getChairPriorities(periods[0].rows).every((item) => item.status === 'within'))
+})
+
+test('missing coverage does not produce healthy chair priorities', () => {
+  assert.deepEqual(getChairPriorities([]), [])
+  const noCoverage = { level: 1, ...summarize([]) }
+  assert.ok(getChairPriorities([noCoverage]).every((item) => item.status === 'unavailable'))
+})
+
+test('card comparisons respect metric direction, percentage-point units and missing history', () => {
+  const pass = kpis.find((kpi) => kpi.id === 'passRate')
+  const difficulty = kpis.find((kpi) => kpi.id === 'difficultyRate')
+  const rating = kpis.find((kpi) => kpi.id === 'meanRating')
+  assert.equal(getKpiComparison(pass, 88, 92.25).direction, 'declined')
+  assert.equal(getKpiComparison(difficulty, 10, 15).direction, 'improved')
+  assert.ok(getKpiComparison(pass, 88, 92.25).label.includes('4.3 pp'))
+  assert.ok(getKpiComparison(rating, 4.2, 4.15).label.includes('0.05 points'))
+  assert.equal(getKpiComparison(pass, 88, null).direction, 'unavailable')
+  assert.equal(getKpiComparison(pass, null, 90).direction, 'unavailable')
+  assert.equal(getKpiComparison(rating, 4.2, 4.200001).direction, 'unchanged')
+  const summary = summarize(periods.at(-1).rows)
+  assert.ok(getKpiCount('difficultyRate', summary).includes('63 / 420 students'))
+  assert.ok(getKpiCount('responseRate', summary).includes('1,260 / 2,100'))
+})
+
+test('priority metrics and target gaps use the same cohort and correct target direction', () => {
+  const [academic, submission, teaching] = getChairPriorities(periods.at(-1).rows)
+  assert.equal(academic.metric.label, 'Academic difficulty rate')
+  assert.ok(Math.abs(academic.metric.value - (20 / 90) * 100) < 1e-10)
+  assert.ok(Math.abs(academic.metric.gap - ((20 / 90) * 100 - 10)) < 1e-10)
+  assert.equal(academic.metric.gapDirection, 'above')
+  assert.equal(submission.metric.value, 90)
+  assert.equal(submission.metric.gap, 5)
+  assert.equal(submission.metric.gapDirection, 'below')
+  assert.equal(teaching.metric.value, 60)
+  assert.equal(teaching.metric.gap, 10)
+  assert.equal(teaching.metric.gapDirection, 'below')
+  assert.ok(getChairPriorities(periods[0].rows).every((item) => item.metric.gap === 0))
+  assert.ok(getChairPriorities([{ level: 1, ...summarize([]) }]).every((item) => item.metric.gap === null))
 })

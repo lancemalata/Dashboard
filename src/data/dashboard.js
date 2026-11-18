@@ -258,3 +258,118 @@ export function getWarnings(metrics) {
         : metrics[kpi.id] < kpi.target),
   )
 }
+
+export function getKpiCount(id, summary) {
+  const counts = {
+    passRate: `${n(summary.passed)} / ${n(summary.outcomes)} course outcomes passed`,
+    onTimeRate: `${n(summary.onTime)} / ${n(summary.sections)} due sections on time`,
+    responseRate: `${n(summary.responses)} / ${n(summary.eligible)} evaluations completed`,
+    meanRating: `${n(summary.responses)} completed evaluations`,
+    difficultyRate: `${n(summary.affected)} / ${n(summary.students)} students with failed courses`,
+  }
+  return counts[id]
+}
+
+export function getKpiComparison(kpi, current, previous) {
+  if (current == null || previous == null)
+    return { label: 'No prior-semester comparison', direction: 'unavailable' }
+
+  const difference = current - previous
+  const digits = kpi.unit === 'rating' ? 2 : 1
+  const magnitude = Math.abs(difference).toFixed(digits)
+  if (Number(magnitude) === 0)
+    return { label: 'No displayed change vs prior semester', direction: 'unchanged' }
+
+  const improved = kpi.direction === 'below' ? difference < 0 : difference > 0
+  return {
+    label: `${difference > 0 ? '+' : '−'}${magnitude} ${kpi.unit === 'rating' ? 'points' : 'pp'} vs prior semester`,
+    direction: improved ? 'improved' : 'declined',
+  }
+}
+
+export function getChairPriorities(rows) {
+  if (rows.length === 0) return []
+
+  const summary = summarize(rows)
+  const metrics = getMetrics(summary)
+  const target = Object.fromEntries(kpis.map((kpi) => [kpi.id, kpi.target]))
+  const academicConcerns = rows
+    .map((row) => ({ row, metrics: getMetrics(summarize([row])) }))
+    .filter(({ metrics: value }) =>
+      (value.passRate !== null && value.passRate < target.passRate) ||
+      (value.difficultyRate !== null && value.difficultyRate > target.difficultyRate),
+    )
+    .sort((a, b) =>
+      (b.metrics.difficultyRate ?? -1) - (a.metrics.difficultyRate ?? -1) ||
+      (a.metrics.passRate ?? 101) - (b.metrics.passRate ?? 101),
+    )
+  const focus = academicConcerns[0]
+  const academicAvailable = metrics.passRate !== null && metrics.difficultyRate !== null
+  const submissionAvailable = metrics.onTimeRate !== null
+  const teachingAvailable = metrics.responseRate !== null && metrics.meanRating !== null
+  const lowParticipation = metrics.responseRate !== null && metrics.responseRate < target.responseRate
+  const lowRating = metrics.meanRating !== null && metrics.meanRating < target.meanRating
+  const academicDetail = focus && focus.metrics.difficultyRate <= target.difficultyRate ? 'passRate' : 'difficultyRate'
+  const teachingDetail = lowRating && !lowParticipation ? 'meanRating' : 'responseRate'
+
+  function priorityMetric(id, values) {
+    const kpi = kpis.find((item) => item.id === id)
+    const value = values[id]
+    return {
+      label: kpi.label,
+      value,
+      unit: kpi.unit,
+      targetLabel: kpi.targetLabel,
+      gap: value === null ? null : Math.max(0,
+        kpi.direction === 'below' ? value - kpi.target : kpi.target - value,
+      ),
+      gapDirection: kpi.direction === 'below' ? 'above' : 'below',
+    }
+  }
+
+  return [
+    {
+      id: 'academic',
+      icon: 'alert',
+      metric: priorityMetric(academicDetail, focus?.metrics ?? metrics),
+      status: !academicAvailable ? 'unavailable' : focus ? 'review' : 'within',
+      title: focus ? `Review Year ${focus.row.level} academic outcomes` : 'Academic outcomes',
+      evidence: focus
+        ? `${formatValue(focus.metrics.passRate)} course pass rate; ${n(focus.row.affected)} of ${n(focus.row.students)} students have a finalized failed course (${formatValue(focus.metrics.difficultyRate)}).`
+        : academicAvailable
+          ? `All selected year levels meet both proposed academic targets; ${n(summary.affected)} of ${n(summary.students)} students have a finalized failed course.`
+          : 'Finalized academic coverage is unavailable for the selected scope.',
+      action: focus
+        ? 'Validate outcomes and coordinate confidential student advising.'
+        : academicAvailable
+          ? 'Monitor outcomes and provide support as needed.'
+          : 'Verify academic data before review.',
+      level: focus?.row.level ?? null,
+      detail: academicDetail,
+    },
+    {
+      id: 'submission',
+      icon: 'clock',
+      metric: priorityMetric('onTimeRate', metrics),
+      status: !submissionAvailable ? 'unavailable' : metrics.onTimeRate < target.onTimeRate ? 'review' : 'within',
+      title: 'Grade-submission timeliness',
+      evidence: submissionAvailable
+        ? `${n(summary.sections - summary.onTime)} of ${n(summary.sections)} due sections did not meet the submission deadline.`
+        : 'No due-section denominator is available.',
+      action: 'Check submission times and approved deadline exceptions.',
+      detail: 'onTimeRate',
+    },
+    {
+      id: 'teaching',
+      icon: 'message',
+      metric: priorityMetric(teachingDetail, metrics),
+      status: !teachingAvailable ? 'unavailable' : lowParticipation || lowRating ? 'review' : 'within',
+      title: 'Teaching feedback and participation',
+      evidence: `${n(summary.responses)} / ${n(summary.eligible)} evaluations completed (${formatValue(metrics.responseRate)}); mean SETE ${formatValue(metrics.meanRating, 'rating')} / 5.`,
+      action: lowParticipation
+        ? 'Address participation barriers before the next evaluation window.'
+        : 'Review faculty feedback alongside other teaching evidence.',
+      detail: teachingDetail,
+    },
+  ]
+}

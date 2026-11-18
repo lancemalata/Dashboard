@@ -8,6 +8,8 @@ import {
   getWarnings,
   selectRows,
   formatValue,
+  getKpiCount,
+  getChairPriorities,
 } from './data/dashboard.js'
 import './App.css'
 
@@ -16,6 +18,8 @@ function Icon({ name, size = 20 }) {
     grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
     book: 'M4 3h13a2 2 0 0 1 2 2v16H6a3 3 0 0 1-3-3V5a2 2 0 0 1 1-2 M3 17h16 M7 7h8 M7 10h6',
     cap: 'm2 9 10-5 10 5-10 5z M6 11v6q6 5 12 0v-6 M22 9v8',
+    trend: 'M3 3v18h18 M7 14l4-4 4 3 6-7 M17 6h4v4',
+    checklist: 'M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4 M9 2h6v4H9z m-3 10 1 1 2-2 M12 12h5 m-11 5 1 1 2-2 M12 17h5',
     clock: 'M12 8v5l3 2 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
     message: 'M21 11a8 8 0 0 1-8 8H7l-5 3V11a9 9 0 0 1 19 0 M7 10h9 M7 14h5',
     star: 'm12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z',
@@ -43,13 +47,17 @@ function Icon({ name, size = 20 }) {
   )
 }
 
-function PanelTitle({ number, title, subtitle, children }) {
+function PanelTitle({ icon, title, subtitle, children }) {
   return (
     <div className="panel-title">
-      <div>
-        <span className="eyebrow">Visualization {number}</span>
-        <h2>{title}</h2>
-        <p>{subtitle}</p>
+      <div className="panel-heading">
+        <span className="panel-heading-icon" aria-hidden="true">
+          <Icon name={icon} size={22} />
+        </span>
+        <div>
+          <h2>{title}</h2>
+          <p>{subtitle}</p>
+        </div>
       </div>
       {children}
     </div>
@@ -83,10 +91,17 @@ function App() {
   const previousMetrics = previousPeriod
     ? getMetrics(summarize(selectRows(previousPeriod, yearLevel)))
     : null
+  const priorities = getChairPriorities(rows)
+  const reviewPriorityCount = priorities.filter((priority) => priority.status === 'review').length
 
   function showDetails(id) {
     setDetail(id)
     dialogRef.current.showModal()
+  }
+
+  function showPriorityDetails(priority) {
+    if (priority.level) setYearLevel(String(priority.level))
+    showDetails(priority.detail)
   }
 
   return (
@@ -105,13 +120,10 @@ function App() {
                 BATANGAS STATE UNIVERSITY · ARASOF NASUGBU
               </div>
               <h1>BatStateU Academic Insights</h1>
-              <p>
-                Academic performance &amp; teaching effectiveness{' '}
-                <span>· Program Chair · BSIT / CICS</span>
-              </p>
+              <p>Program Chair · BSIT / CICS</p>
             </div>
             <div className="header-actions">
-              <span className="sample-badge">Simulated data · Case study</span>
+              <span className="sample-badge">Simulated data</span>
               <button
                 className="button print-button"
                 onClick={() => window.print()}
@@ -190,12 +202,12 @@ function App() {
                   size={16}
                 />
                 {metrics.difficultyRate > 10
-                  ? 'Academic support review needed'
+                  ? 'Academic support needed'
                   : 'Within proposed difficulty target'}
               </strong>
               <small>
-                {summary.affected} of {summary.students} students have a
-                finalized failed course · Target ≤ 10%
+                {summary.affected} of {summary.students} students with failed
+                courses · Target ≤ 10%
               </small>
             </div>
           </section>
@@ -213,12 +225,13 @@ function App() {
                   className="kpi-card"
                   onClick={() => showDetails(kpi.id)}
                   aria-label={`${kpi.label}: ${formatValue(value, kpi.unit)}. View calculation`}
+                  title="View calculation, interpretation and recommended action"
                 >
                   <div className="kpi-top">
                     <span
                       className={`kpi-icon ${warning ? 'needs-review' : ''}`}
                     >
-                      <Icon name={kpi.icon} size={18} />
+                      <Icon name={kpi.icon} size={22} />
                     </span>
                   </div>
                   <h2>{kpi.label}</h2>
@@ -248,19 +261,70 @@ function App() {
             aria-atomic="true"
           >
             <span>
-              Showing {period.semester} · AY {period.year} · {scope} ·{' '}
+              <strong>{period.semester} · AY {period.year}</strong> · {scope} ·{' '}
               {summary.students} students
             </span>
-            <span>
-              Finalized scenario · Closed evaluation window · Proposed targets
-            </span>
           </div>
+          <section className="chair-priorities" aria-labelledby="chair-priorities-title">
+            <div className="priority-heading">
+              <div>
+                <h2 id="chair-priorities-title">Program Chair priorities</h2>
+                <p className="priority-period">
+                  {reviewPriorityCount} {reviewPriorityCount === 1 ? 'priority needs' : 'priorities need'} review
+                </p>
+              </div>
+            </div>
+            <ul className="priority-list">
+              {priorities.map((priority) => (
+                <li key={priority.id} className={`priority-item priority-${priority.status}`}>
+                  <div className="priority-title">
+                    <span className="priority-icon"><Icon name={priority.icon} size={21} /></span>
+                    <h3>{priority.title}</h3>
+                    <span className="priority-scope">{priority.level ? `Year ${priority.level}` : scope}</span>
+                  </div>
+                  <div className="priority-metric">
+                    <strong>{formatValue(priority.metric.value, priority.metric.unit)}
+                      {priority.metric.unit === 'rating' && <small> / 5</small>}
+                    </strong>
+                    <span>{priority.metric.label}</span>
+                  </div>
+                  <div className="priority-target">
+                    <span>Target {priority.metric.targetLabel}</span>
+                    <strong>
+                      {priority.metric.gap === null ? 'Gap N/A' : priority.metric.gap > 0
+                        ? `Gap ${priority.metric.gap.toFixed(priority.metric.unit === 'rating' ? 2 : 1)} ${priority.metric.unit === 'rating' ? 'points' : 'pp'} ${priority.metric.gapDirection}`
+                        : 'Target met'}
+                    </strong>
+                  </div>
+                  <p className="priority-evidence">
+                    <strong>{priority.status === 'review' ? 'Review needed' : priority.status === 'within' ? 'Within target' : 'Not available'}</strong>
+                    {' · '}{priority.evidence}
+                  </p>
+                  <div className="priority-action">
+                    <strong>Recommended action</strong>
+                    <p>{priority.action}</p>
+                  </div>
+                  <div className="priority-controls">
+                    <button type="button" onClick={() => showPriorityDetails(priority)}
+                      aria-label={`View full analysis for ${priority.metric.label}, ${priority.level ? `Year ${priority.level}` : scope}`}>
+                      View full analysis <Icon name="arrow" size={14} />
+                    </button>
+                    {priority.level && yearLevel === 'all' && (
+                      <button type="button" className="priority-focus" onClick={() => setYearLevel(String(priority.level))}>
+                        Focus Year {priority.level} <Icon name="arrow" size={13} />
+                      </button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
           <div className="chart-grid">
             <section className="panel" id="academic">
               <PanelTitle
-                number="01"
+                icon="cap"
                 title="Course pass rate"
-                subtitle="By year level · finalized course outcomes"
+                subtitle="By year level"
               >
                 <span className="unit-tag">%</span>
               </PanelTitle>
@@ -305,9 +369,9 @@ function App() {
             </section>
             <section className="panel trend-panel" id="teaching">
               <PanelTitle
-                number="02"
+                icon="trend"
                 title="Average SETE rating across semesters"
-                subtitle="Overall item-weighted mean · through selected semester"
+                subtitle="Item-weighted mean through selected semester"
               />
               <div className="line-chart">
                 <svg
@@ -410,15 +474,14 @@ function App() {
                 </div>
               </div>
               <p className="chart-note">
-                Scale: 1–5 · Dashed line: proposed target 4.00 · n = completed
-                evaluations · Descriptive trend, not a forecast
+                Scale: 1–5 · Dashed line: target 4.00 · n = completed evaluations
               </p>
             </section>
             <section className="panel dimension-panel">
               <PanelTitle
-                number="03"
+                icon="checklist"
                 title="SETE ratings by evaluation dimension"
-                subtitle="Dimension mean · dashed marker: proposed target 4.00"
+                subtitle="Mean scores from completed evaluations"
               />
               <div
                 className="dimension-chart"
@@ -447,8 +510,8 @@ function App() {
                         }}
                       />
                     </div>
-                    <small>
-                      {dimension.items} statements · equal weight per item
+                    <small title="Each statement has equal weight within its dimension">
+                      {dimension.items} statements
                     </small>
                   </div>
                 ))}
@@ -472,18 +535,12 @@ function App() {
           </div>
           <div className="context-strip">
             <span>
-              <strong>
-                {summary.responses.toLocaleString()} /{' '}
-                {summary.eligible.toLocaleString()}
-              </strong>{' '}
-              completed / eligible evaluations
-              {metrics.responseRate < 70 && (
-                <b> · Low participation: interpret ratings cautiously.</b>
-              )}
+              {metrics.responseRate < 70
+                ? <b>Low participation: interpret SETE ratings cautiously.</b>
+                : 'SETE ratings reflect completed evaluations.'}
             </span>
             <span>
-              SETE must not be the sole basis for personnel decisions. No real
-              student or faculty records are shown.
+              Use SETE alongside other teaching evidence.
             </span>
           </div>
           <footer>
@@ -528,6 +585,7 @@ function App() {
               <p className="dialog-scope">
                 {period.semester} · AY {period.year} · {scope}
               </p>
+              <p>{getKpiCount(detailKpi.id, summary)}</p>
               <h3>Calculation</h3>
               <p>{detailKpi.formula}</p>
               <div className="calculation">{detailKpi.inputs(summary)}</div>
