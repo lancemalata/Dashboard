@@ -35,6 +35,21 @@ The application uses white panels, a pale gray workspace, charcoal headings, and
 
 **Visualization 03 SETE evaluation dimensions.** Horizontal dimension bars compare the selected period's three dimension averages on a 0–5 display scale. The display identifies the full dimension names, scores, number of statements, and total completed evaluations. The six-, five-, and four-item dimensions follow the supplied form. Each item has equal weight in the provisional calculation, meaning the overall rating is not a simple average of the three dimension means. Once an official instrument or weighting rule is provided, the calculation and explanation should be updated together.
 
+## Readability and usability choices
+
+The interface uses a clean white report canvas, a slim header with a restrained burgundy rule, compact KPI cards, and larger chart areas with balanced emphasis on academic outcomes and teaching feedback. Dark secondary text and consistent spacing establish a clear hierarchy. KPI formulas remain in the detail dialogs rather than taking space inside the cards; chart counts, bars, and ratings occupy separate columns to prevent label collisions. The original application symbol remains distinct from the official university seal. These choices apply usability principles; they are design decisions rather than a completed usability study or accessibility certification.
+
+| Principle | Dashboard behavior |
+| --- | --- |
+| Visibility of system status | The selected semester, academic year, cohort, and student count are shown together; the scope summary announces filter changes to assistive technology |
+| User control | Reset filters restores the default reporting scenario, and KPI dialogs offer explicit Close controls |
+| Recognition rather than recall | Cards show values, targets, and status; a visible Details label opens the formula and underlying inputs |
+| Consistency | Filters, buttons, card labels, warning states, and chart headings use consistent presentation and interaction feedback |
+| Error prevention and interpretation | Semester options match the academic year; a prominent simulated-data badge and proposed-target labels identify the demonstration's limits |
+| Readability and inclusive interaction | Darker text, larger labels, visible keyboard focus, descriptive chart text, reduced-motion support, and text warnings alongside color support different ways of using the page |
+
+The interface prioritizes readable content on small or zoomed viewports. It does not hide or clip information merely to force a single-screen fit. Visual layout, keyboard interaction, zoom behavior, and print output still require browser acceptance testing.
+
 ## Two interactive features
 
 **Feature 1 Coordinated filtering.** Academic-year and semester controls select the reporting period. Only semesters included in the simulated dataset are offered for a given year. A year-level control allows the chair to inspect all BSIT year levels or a single year level. All five KPI cards, the selected-period charts, participation counts, and warning conditions are recalculated from the selected scope. The historical trend uses the same year-level scope and includes periods up to the selected semester. Because this case study has one college and one program, the header's college/program scope remains fixed rather than offering meaningless alternatives. A future authorized multi-college system could add scoped college or department filters.

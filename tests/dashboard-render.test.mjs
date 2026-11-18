@@ -33,6 +33,11 @@ test('dashboard renders the required five cards, three charts, filters and conte
     assert.ok(html.includes('Academic support review needed'))
     assert.ok(html.includes('Average SETE rating across semesters'))
     assert.ok(html.includes('n = '))
+    assert.ok(html.includes('Reset filters'))
+    assert.ok(html.includes('Simulated data · Case study'))
+    assert.ok(html.includes('Details'))
+    assert.ok(html.includes('aria-atomic="true"'))
+    assert.ok(html.includes('aria-labelledby="kpi-detail-title"'))
   } finally {
     await server.close()
   }

@@ -2,7 +2,7 @@
 :root {
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
   color: #29333d;
-  background: #fff;
+  background: #f6f5f7;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -10,8 +10,8 @@
   font-size: 14px;
   line-height: 1.5;
   color-scheme: light;
-  --red: #a92b3a;
-  --muted: #77818c;
+  --red: #a21d35;
+  --muted: #596575;
   --border: #e7e9ed;
   --green: #3e7561;
 }
@@ -41,7 +41,7 @@ a {
 button:focus-visible,
 a:focus-visible,
 select:focus-visible {
-  outline: 3px solid #b64a58;
+  outline: 3px solid #941e32;
   outline-offset: 4px;
 }
 h1,

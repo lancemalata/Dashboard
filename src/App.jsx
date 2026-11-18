@@ -93,6 +93,9 @@ function App() {
       <div className="workspace">
         <main id="main">
           <div className="page-heading">
+            <span className="university-mark">
+              <Icon name="cap" size={31} />
+            </span>
             <div>
               <div className="eyebrow">
                 BATANGAS STATE UNIVERSITY · ARASOF NASUGBU
@@ -103,13 +106,16 @@ function App() {
                 <span>· Program Chair · BSIT / CICS</span>
               </p>
             </div>
-            <button
-              className="button print-button"
-              onClick={() => window.print()}
-            >
-              <Icon name="print" size={17} />
-              Print dashboard
-            </button>
+            <div className="header-actions">
+              <span className="sample-badge">Simulated data · Case study</span>
+              <button
+                className="button print-button"
+                onClick={() => window.print()}
+              >
+                <Icon name="print" size={17} />
+                Print dashboard
+              </button>
+            </div>
           </div>
           <section className="filter-bar" aria-label="Dashboard filters">
             <label>
@@ -158,6 +164,17 @@ function App() {
                 ))}
               </select>
             </label>
+            <button
+              type="button"
+              className="reset-button"
+              onClick={() => {
+                setPeriodId('2026-2027-1')
+                setYearLevel('all')
+              }}
+              disabled={periodId === '2026-2027-1' && yearLevel === 'all'}
+            >
+              Reset filters
+            </button>
             <div
               className={`risk-summary ${metrics.difficultyRate > 10 ? 'risk-warning' : ''}`}
               role="status"
@@ -214,18 +231,25 @@ function App() {
                         ? 'Needs review'
                         : 'Within target'}
                   </div>
-                  <div className="kpi-input">{kpi.inputs(summary)}</div>
                   <div className="kpi-target">
                     Target {kpi.targetLabel}
-                    <Icon name="info" size={14} />
+                    <span className="details-hint">
+                      Details <Icon name="arrow" size={12} />
+                    </span>
                   </div>
                 </button>
               )
             })}
           </section>
-          <div className="section-caption">
+          <div
+            className="section-caption"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <span>
-              {period.semester} · AY {period.year} · {scope}
+              Showing {period.semester} · AY {period.year} · {scope} ·{' '}
+              {summary.students} students
             </span>
             <span>
               Finalized scenario · Closed evaluation window · Proposed targets
@@ -288,6 +312,7 @@ function App() {
               <div className="line-chart">
                 <svg
                   viewBox="0 0 640 200"
+                  preserveAspectRatio="none"
                   role="img"
                   aria-label={`Mean SETE rating trend for ${scope}. ${trend.map((point) => `${point.shortLabel}: ${point.meanRating.toFixed(2)} out of 5 from ${point.responses} evaluations`).join('. ')}`}
                 >
@@ -468,6 +493,7 @@ function App() {
       <dialog
         ref={dialogRef}
         className="detail-dialog"
+        aria-labelledby="kpi-detail-title"
         onClick={(event) => {
           if (event.target === event.currentTarget) dialogRef.current.close()
         }}
@@ -477,7 +503,7 @@ function App() {
             <div className="dialog-heading">
               <div>
                 <span className="eyebrow">KPI DEFINITION</span>
-                <h2>{detailKpi.label}</h2>
+                <h2 id="kpi-detail-title">{detailKpi.label}</h2>
               </div>
               <button
                 className="icon-button"
