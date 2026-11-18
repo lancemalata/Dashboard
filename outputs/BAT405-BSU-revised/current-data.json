@@ -1,0 +1,402 @@
+{
+  "periods": [
+    {
+      "id": "2025-2026-1",
+      "year": "2025-2026",
+      "semester": "First semester",
+      "shortLabel": "25–26 · S1",
+      "order": 1,
+      "rows": [
+        {
+          "level": 1,
+          "students": 110,
+          "passed": 510,
+          "affected": 10,
+          "sections": 10,
+          "onTime": 10,
+          "responses": 385,
+          "outcomes": 550,
+          "eligible": 550,
+          "dimensionPoints": [
+            9471,
+            7815,
+            6160
+          ]
+        },
+        {
+          "level": 2,
+          "students": 100,
+          "passed": 460,
+          "affected": 10,
+          "sections": 10,
+          "onTime": 10,
+          "responses": 350,
+          "outcomes": 500,
+          "eligible": 500,
+          "dimensionPoints": [
+            8610,
+            7105,
+            5600
+          ]
+        },
+        {
+          "level": 3,
+          "students": 90,
+          "passed": 414,
+          "affected": 9,
+          "sections": 8,
+          "onTime": 8,
+          "responses": 315,
+          "outcomes": 450,
+          "eligible": 450,
+          "dimensionPoints": [
+            7749,
+            6394,
+            5040
+          ]
+        },
+        {
+          "level": 4,
+          "students": 90,
+          "passed": 414,
+          "affected": 9,
+          "sections": 8,
+          "onTime": 8,
+          "responses": 315,
+          "outcomes": 450,
+          "eligible": 450,
+          "dimensionPoints": [
+            7749,
+            6394,
+            5040
+          ]
+        }
+      ],
+      "summary": {
+        "students": 390,
+        "passed": 1798,
+        "affected": 38,
+        "sections": 36,
+        "onTime": 36,
+        "responses": 1365,
+        "outcomes": 1950,
+        "eligible": 1950,
+        "dimensionPoints": [
+          33579,
+          27708,
+          21840
+        ],
+        "itemCount": 20475,
+        "points": 83127,
+        "dimensionScores": [
+          4.1,
+          4.05978021978022,
+          4
+        ]
+      },
+      "metrics": {
+        "passRate": 92.2051282051282,
+        "onTimeRate": 100,
+        "responseRate": 70,
+        "meanRating": 4.05992673992674,
+        "difficultyRate": 9.743589743589745
+      }
+    },
+    {
+      "id": "2025-2026-2",
+      "year": "2025-2026",
+      "semester": "Second semester",
+      "shortLabel": "25–26 · S2",
+      "order": 2,
+      "rows": [
+        {
+          "level": 1,
+          "students": 115,
+          "passed": 535,
+          "affected": 10,
+          "sections": 12,
+          "onTime": 12,
+          "responses": 430,
+          "outcomes": 575,
+          "eligible": 575,
+          "dimensionPoints": [
+            10836,
+            8901,
+            7018
+          ]
+        },
+        {
+          "level": 2,
+          "students": 105,
+          "passed": 485,
+          "affected": 10,
+          "sections": 10,
+          "onTime": 10,
+          "responses": 390,
+          "outcomes": 525,
+          "eligible": 525,
+          "dimensionPoints": [
+            9828,
+            8073,
+            6365
+          ]
+        },
+        {
+          "level": 3,
+          "students": 95,
+          "passed": 435,
+          "affected": 10,
+          "sections": 10,
+          "onTime": 10,
+          "responses": 355,
+          "outcomes": 475,
+          "eligible": 475,
+          "dimensionPoints": [
+            8946,
+            7348,
+            5794
+          ]
+        },
+        {
+          "level": 4,
+          "students": 85,
+          "passed": 390,
+          "affected": 9,
+          "sections": 8,
+          "onTime": 8,
+          "responses": 320,
+          "outcomes": 425,
+          "eligible": 425,
+          "dimensionPoints": [
+            8064,
+            6624,
+            5222
+          ]
+        }
+      ],
+      "summary": {
+        "students": 400,
+        "passed": 1845,
+        "affected": 39,
+        "sections": 40,
+        "onTime": 40,
+        "responses": 1495,
+        "outcomes": 2000,
+        "eligible": 2000,
+        "dimensionPoints": [
+          37674,
+          30946,
+          24399
+        ],
+        "itemCount": 22425,
+        "points": 93019,
+        "dimensionScores": [
+          4.2,
+          4.139933110367893,
+          4.080100334448161
+        ]
+      },
+      "metrics": {
+        "passRate": 92.25,
+        "onTimeRate": 100,
+        "responseRate": 74.75,
+        "meanRating": 4.148004459308807,
+        "difficultyRate": 9.75
+      }
+    },
+    {
+      "id": "2026-2027-1",
+      "year": "2026-2027",
+      "semester": "First semester",
+      "shortLabel": "26–27 · S1",
+      "order": 3,
+      "rows": [
+        {
+          "level": 1,
+          "students": 120,
+          "passed": 552,
+          "affected": 12,
+          "sections": 12,
+          "onTime": 12,
+          "responses": 420,
+          "outcomes": 600,
+          "eligible": 600,
+          "dimensionPoints": [
+            10710,
+            8820,
+            6930
+          ]
+        },
+        {
+          "level": 2,
+          "students": 110,
+          "passed": 495,
+          "affected": 14,
+          "sections": 10,
+          "onTime": 9,
+          "responses": 350,
+          "outcomes": 550,
+          "eligible": 550,
+          "dimensionPoints": [
+            8925,
+            7350,
+            5775
+          ]
+        },
+        {
+          "level": 3,
+          "students": 100,
+          "passed": 435,
+          "affected": 17,
+          "sections": 10,
+          "onTime": 9,
+          "responses": 280,
+          "outcomes": 500,
+          "eligible": 500,
+          "dimensionPoints": [
+            7140,
+            5880,
+            4620
+          ]
+        },
+        {
+          "level": 4,
+          "students": 90,
+          "passed": 366,
+          "affected": 20,
+          "sections": 8,
+          "onTime": 6,
+          "responses": 210,
+          "outcomes": 450,
+          "eligible": 450,
+          "dimensionPoints": [
+            5355,
+            4410,
+            3465
+          ]
+        }
+      ],
+      "summary": {
+        "students": 420,
+        "passed": 1848,
+        "affected": 63,
+        "sections": 40,
+        "onTime": 36,
+        "responses": 1260,
+        "outcomes": 2100,
+        "eligible": 2100,
+        "dimensionPoints": [
+          32130,
+          26460,
+          20790
+        ],
+        "itemCount": 18900,
+        "points": 79380,
+        "dimensionScores": [
+          4.25,
+          4.2,
+          4.125
+        ]
+      },
+      "metrics": {
+        "passRate": 88,
+        "onTimeRate": 90,
+        "responseRate": 60,
+        "meanRating": 4.2,
+        "difficultyRate": 15
+      }
+    }
+  ],
+  "kpis": [
+    {
+      "id": "passRate",
+      "label": "Course pass rate",
+      "icon": "cap",
+      "unit": "percent",
+      "target": 90,
+      "targetLabel": "≥ 90%",
+      "direction": "above",
+      "formula": "Passed student–course enrollments ÷ enrollments with finalized pass/fail outcomes × 100.",
+      "title": "Course outcomes need attention",
+      "action": "Review course and year-level outcomes; plan appropriate academic support.",
+      "context": "Counts course outcomes, not unique students. Missing, incomplete and withdrawn records are excluded and must be disclosed in a production report."
+    },
+    {
+      "id": "onTimeRate",
+      "label": "On-time grade submission",
+      "icon": "clock",
+      "unit": "percent",
+      "target": 95,
+      "targetLabel": "≥ 95%",
+      "direction": "above",
+      "formula": "Sections with complete final grades submitted by the applicable deadline ÷ sections whose deadline has passed × 100.",
+      "title": "Grade submission needs follow-up",
+      "action": "Check overdue sections and approved deadline exceptions before follow-up.",
+      "context": "A complete submission after the deadline remains late. All grades in this scenario are now finalized; the timeliness record is retained."
+    },
+    {
+      "id": "responseRate",
+      "label": "SETE response rate",
+      "icon": "message",
+      "unit": "percent",
+      "target": 70,
+      "targetLabel": "≥ 70%",
+      "direction": "above",
+      "formula": "Completed valid evaluations ÷ eligible student–course evaluation assignments × 100.",
+      "title": "Evaluation participation is low",
+      "action": "Review access and eligibility issues; interpret the available feedback cautiously.",
+      "context": "A student can evaluate several courses. This counts evaluation assignments, not distinct students. The evaluation window is closed in this scenario; open windows should say participation in progress."
+    },
+    {
+      "id": "meanRating",
+      "label": "Mean SETE rating",
+      "icon": "star",
+      "unit": "rating",
+      "target": 4,
+      "targetLabel": "≥ 4.00 / 5",
+      "direction": "above",
+      "formula": "Total valid item-score points ÷ valid item responses in completed fifteen-item evaluations.",
+      "title": "Teaching feedback warrants review",
+      "action": "Discuss dimension results, participation and supporting evidence with the faculty member.",
+      "context": "All fifteen items have equal weight. The dimensions have six, five and four items. A rating is student perception, not a complete measure of effectiveness; do not use it alone for personnel decisions."
+    },
+    {
+      "id": "difficultyRate",
+      "label": "Academic difficulty rate",
+      "icon": "alert",
+      "unit": "percent",
+      "target": 10,
+      "targetLabel": "≤ 10%",
+      "direction": "below",
+      "formula": "Distinct students with at least one finalized failed course ÷ students with at least one finalized pass/fail outcome × 100.",
+      "title": "Academic support may be needed",
+      "action": "Validate failed-course records and arrange confidential advising or learning support.",
+      "context": "Each student is counted once. This describes recorded academic outcomes; it is not a prediction of future failure or a judgment of student ability."
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "management",
+      "label": "Management of Teaching and Learning",
+      "short": "Management",
+      "items": 6,
+      "color": "#a92b3a"
+    },
+    {
+      "id": "knowledge",
+      "label": "Content Knowledge, Pedagogy and Technology",
+      "short": "Knowledge",
+      "items": 5,
+      "color": "#446d83",
+      "dash": "6 3"
+    },
+    {
+      "id": "commitment",
+      "label": "Commitment and Transparency",
+      "short": "Commitment",
+      "items": 4,
+      "color": "#97815c",
+      "dash": "2 3"
+    }
+  ]
+}

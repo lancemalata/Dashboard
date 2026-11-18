@@ -327,6 +327,15 @@ function App() {
                       />
                     </g>
                   ))}
+                  <line
+                    className="trend-target"
+                    x1="28"
+                    x2="620"
+                    y1="58"
+                    y2="58"
+                  >
+                    <title>Proposed SETE target: 4.00 out of 5</title>
+                  </line>
                   <polyline
                     fill="none"
                     stroke="#a92b3a"
@@ -346,7 +355,14 @@ function App() {
                     const y = 148 - (point.meanRating - 1) * 30
                     return (
                       <g key={point.id}>
-                        <circle cx={x} cy={y} r="4" fill="#a92b3a">
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r={point.id === periodId ? 6 : 4}
+                          fill="#a92b3a"
+                          stroke={point.id === periodId ? '#fff' : 'none'}
+                          strokeWidth="2"
+                        >
                           <title>{`${point.shortLabel}: ${point.meanRating.toFixed(2)} / 5 · ${point.responses} completed evaluations`}</title>
                         </circle>
                       </g>
@@ -394,8 +410,8 @@ function App() {
                 </div>
               </div>
               <p className="chart-note">
-                Scale: 1–5 · n = completed evaluations · Descriptive trend, not
-                a forecast
+                Scale: 1–5 · Dashed line: proposed target 4.00 · n = completed
+                evaluations · Descriptive trend, not a forecast
               </p>
             </section>
             <section className="panel dimension-panel">
