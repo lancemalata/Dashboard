@@ -24,10 +24,10 @@ npm run build
 ## Dashboard scope
 
 - Five KPI cards: course pass rate, on-time grade submission, SETE response rate, mean SETE rating, and academic difficulty rate.
-- Three visualizations: pass rate by year level, overall mean SETE ratings across semesters, and selected-period SETE dimension scores.
+- Three visualizations: pass rate by year level, overall mean SETE ratings across semesters, and selected-period SETE dimension dot plot with a 4.00 target marker.
 - Two interactive feature groups: coordinated academic-year/semester/year-level filtering and KPI-detail dialogs.
 - Compact review flags with management actions in the detail dialogs, plus participation context.
-- A menu-free report layout: two charts above a full-width evaluation-dimension chart, with visible counts and targets.
+- A concise menu-free dashboard targeting roughly two desktop screens: two side-by-side charts, one full-width dimension plot, compact alerts, and collapsed help.
 - Long bond print styles requested at 8.5 × 13 inches; pagination and color output require print-preview verification.
 
 The latest simulated scenario matches the paper: 88% pass rate, 90% on-time submission, 60% evaluation participation, 4.20/5 mean rating, and 15% academic difficulty. Earlier periods demonstrate historical comparisons and a no-alert state. A hypothetical finalized semester does not imply the real semester or evaluation window is closed.
@@ -36,7 +36,7 @@ The latest simulated scenario matches the paper: 88% pass rate, 90% on-time subm
 
 - [Parts I and II](docs/case-study-parts-i-ii.md): assessment, evidence and assumptions, KPI definitions, proposed thresholds, and sample calculations.
 - [Part III](docs/case-study-part-iii.md): labeled component explanations, visualization choices, interactions, alerts, and proposed confidentiality controls.
-- [Dashboard](src/App.jsx): one-page React interface.
+- [Dashboard](src/App.jsx): scrollable React interface with compact print styles.
 - [Simulated data and calculations](src/data/dashboard.js): shared KPI definitions and aggregation logic.
 - [Application mark](public/academic-insights.svg): original graduation-cap symbol.
 

@@ -2,7 +2,7 @@
 
 ## Purpose and primary user
 
-Academic Insights is a proposed one-page analytics dashboard for the Program Chair of BS Information Technology under the College of Informatics and Computing Sciences at Batangas State University – ARASOF Nasugbu. It brings selected academic indicators and student teaching feedback into a common reporting view. The intended decisions concern academic support, timely grade submission, evaluation participation, and constructive discussion of teaching practices.
+Academic Insights is a proposed analytics dashboard for the Program Chair of BS Information Technology under the College of Informatics and Computing Sciences at Batangas State University – ARASOF Nasugbu. It brings selected academic indicators and student teaching feedback into a common reporting view. The intended decisions concern academic support, timely grade submission, evaluation participation, and constructive discussion of teaching practices.
 
 The dashboard is a system-design prototype implemented in the repository's existing React and Vite project. Programming is optional in the activity; the interactive prototype supplies the labeled dashboard mockup requested in the brief. It uses only simulated program aggregates. No connection to the university's systems, official administrative reports, real student records, or actual faculty ratings is implemented or claimed. The supplied student screens label the evaluation process SET; this case study follows the assignment's SETE terminology.
 
@@ -21,11 +21,11 @@ The dashboard presents the primary user's role and program scope, followed by fi
 | KPI 5 | Academic difficulty rate | Distinct students with at least one failed course divided by students with finalized outcomes; supports confidential academic assistance |
 | Visualization 01 | Course pass rate by year level | Horizontal bars and numerical percentages with a proposed 90% reference marker; compares academic outcomes within BSIT |
 | Visualization 02 | Average SETE rating across semesters | Overall item-weighted mean across available semesters, with numerical ratings and completed evaluation counts; displays descriptive patterns rather than predictions |
-| Visualization 03 | SETE ratings by evaluation dimension | Horizontal bars for the three evaluation dimensions in the selected semester; helps identify relative areas for follow-up |
+| Visualization 03 | SETE ratings by evaluation dimension | Horizontal dot plot for three dimension means on a 1–5 scale, with a proposed target marker at 4.00 |
 | Priorities for review | Warning mechanism | Text-based flags for KPIs that breach the proposed thresholds, each paired with a suggested review action |
 | Participation and confidentiality context | Compact information strip | Completed and eligible evaluation counts, a participation explanation, and a reminder that SETE must not determine personnel decisions by itself |
 
-The application uses white panels, a pale gray workspace, charcoal headings, and restrained red accents consistent with the requested university theme. The graduation-cap mark is an original application symbol, not a reproduction of the university seal. Status text supplements color so that a warning is not communicated by color alone. Following the researcher's reference, the desktop layout uses a compact report canvas: five KPI cards above two side-by-side charts, with a full-width dimension chart below them. Counts and targets remain visible, while longer management explanations are available in the KPI dialogs. The layout targets a single desktop screen without hiding content; narrower screens stack the same content vertically. Exact viewport fit still requires visual verification.
+The screen design uses a concise, scrollable white dashboard with subtle burgundy accents, targeting approximately two desktop viewport heights. Five compact KPI cards and a short warning strip precede two side-by-side charts for course outcomes and semester ratings. A full-width dimension dot plot follows. Essential counts and participation context remain visible; formulas and longer explanations are available in dialogs or a collapsed dashboard guide. No navigation menu is included. Narrow screens stack the same charts naturally. Exact screen height depends on viewport and zoom and remains subject to visual verification; the assignment's one-page dashboard remains a separate print-layout requirement.
 
 ## Choice of three visualizations
 
@@ -33,20 +33,28 @@ The application uses white panels, a pale gray workspace, charcoal headings, and
 
 **Visualization 02 Average SETE rating across semesters.** A single line chart shows the overall mean SETE rating across the available semesters on a 1–5 scale. It computes each mean from the underlying item-score totals and response counts rather than averaging subgroup means. Visible point labels provide the ratings; each semester also displays n, its completed evaluation count. Period labels identify the academic year and semester; for example, 25–26 · S1 means the first semester of AY 2025–2026. Selecting an earlier reporting period removes later periods from the trend, and selecting a year level applies that cohort scope across the historical periods. Earlier academic years remain as historical context. The chart's accessible description also supplies the values and counts. Changes are descriptive and require contextual review; they are not forecasts or proof of improved learning.
 
-**Visualization 03 SETE evaluation dimensions.** Horizontal dimension bars compare the selected period's three dimension averages on a 0–5 display scale. The display identifies the full dimension names, scores, number of statements, and total completed evaluations. The six-, five-, and four-item dimensions follow the supplied form. Each item has equal weight in the provisional calculation, meaning the overall rating is not a simple average of the three dimension means. Once an official instrument or weighting rule is provided, the calculation and explanation should be updated together.
+**Visualization 03 SETE evaluation dimensions.** A horizontal dot plot compares the selected period's three dimension averages on a 1–5 display scale, with a dashed reference marker at the proposed 4.00 target. Dots show location on the rating scale rather than implying that the entire scale is a filled quantity. The display identifies the full dimension names, scores, number of statements, and total completed evaluations. The six-, five-, and four-item dimensions follow the supplied form. Each item has equal weight in the provisional calculation, meaning the overall rating is not a simple average of the three dimension means. Once an official instrument or weighting rule is provided, the calculation and explanation should be updated together.
 
 ## Readability and usability choices
 
-The interface uses a clean white report canvas, a slim header with a restrained burgundy rule, compact KPI cards, and larger chart areas with balanced emphasis on academic outcomes and teaching feedback. Dark secondary text and consistent spacing establish a clear hierarchy. KPI formulas remain in the detail dialogs rather than taking space inside the cards; chart counts, bars, and ratings occupy separate columns to prevent label collisions. The original application symbol remains distinct from the official university seal. These choices apply usability principles; they are design decisions rather than a completed usability study or accessibility certification.
+The revised visual direction takes structural inspiration from [AcaVision](https://acavision.vercel.app/), inspected through its public page markup and styles. The application retains its own name, graduation-cap mark, BSU burgundy accents, dataset, five KPI definitions, and three evaluation dimensions. The final design uses compact headers, KPI cards, and charts instead of a large introduction or reading-guide panel. Additional explanation is available on demand. Each KPI also displays a neutral comparison with the immediately preceding sample semester for the same year-level scope. Percentage changes are expressed in percentage points, while rating differences use scale points; no earlier-period comparison appears when none is available. These comparisons describe the samples and do not establish causes. The reference is a design reference, not a source of university performance data. Its visual rendering could not be inspected through the available browser tools.
 
-| Principle | Dashboard behavior |
+The interface uses a clean white report canvas, a slim header with a restrained burgundy rule, compact KPI cards, and larger chart areas with balanced emphasis on academic outcomes and teaching feedback. Dark secondary text, larger screen labels, generous chart padding, and consistent spacing establish a clear hierarchy. The screen layout grows naturally with its content rather than compressing charts to a fixed viewport height. Trend labels use CSS-sized text outside the scalable SVG drawing so they retain normal proportions. KPI formulas remain in the detail dialogs rather than taking space inside the cards; chart counts, bars, and ratings occupy separate columns to prevent label collisions. The original application symbol remains distinct from the official university seal. These choices apply usability principles; they are design decisions rather than a completed usability study or accessibility certification.
+
+The review uses [Jakob Nielsen's ten heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/) as design guidance, not certification.
+
+| Heuristic area | Application or limit |
 | --- | --- |
-| Visibility of system status | The selected semester, academic year, cohort, and student count are shown together; the scope summary announces filter changes to assistive technology |
-| User control | Reset filters restores the default reporting scenario, and KPI dialogs offer explicit Close controls |
-| Recognition rather than recall | Cards show values, targets, and status; a visible Details label opens the formula and underlying inputs |
-| Consistency | Filters, buttons, card labels, warning states, and chart headings use consistent presentation and interaction feedback |
-| Error prevention and interpretation | Semester options match the academic year; a prominent simulated-data badge and proposed-target labels identify the demonstration's limits |
-| Readability and inclusive interaction | Darker text, larger labels, visible keyboard focus, descriptive chart text, reduced-motion support, and text warnings alongside color support different ways of using the page |
+| 1 Status | Active scope and changing counts remain visible. |
+| 2 Familiar language | Academic terms have contextual explanations. |
+| 3 Control | Reset filters and close dialogs. |
+| 4 Consistency | Repeated labels, targets, controls, and chart patterns. |
+| 5 Prevention | Semester choices follow the selected academic year. |
+| 6 Recognition | Targets stay visible; details explain calculations. |
+| 7 Efficiency | Filters update together; details open from cards or warnings. |
+| 8 Focus | Large charts; supplementary help stays collapsed. |
+| 9 Recovery | Unavailable calculations avoid false scores; live-source error recovery remains future work. |
+| 10 Help | Collapsed task guidance and KPI interpretation dialogs. |
 
 The interface prioritizes readable content on small or zoomed viewports. It does not hide or clip information merely to force a single-screen fit. Visual layout, keyboard interaction, zoom behavior, and print output still require browser acceptance testing.
 
@@ -78,6 +86,6 @@ Part II proposes suppressing class or faculty rating details below five complete
 
 The proposed reporting layer would obtain institution-approved extracts or APIs from portal academic records and SETE. It would validate academic year, semester, class section, and program identifiers before aggregation. Source-system transactions would continue in their existing systems. The prototype demonstrates how aligned summaries could support decisions; it does not establish that the integration or the assumed Faculty Portal reporting capabilities already exist.
 
-The Print dashboard control invokes the browser print dialog. Print styles request one long bond page, 8.5 × 13 inches, and retain the five cards, three charts, filters, alerts, and confidentiality context. Actual pagination must be checked in print preview before submission, using the correct paper size and color settings. Browser headers and footers may need to be disabled. No final colored page or verified print artifact is claimed by this draft.
+The screen view is deliberately scrollable. The Print dashboard control invokes a separate compact browser print layout. Print styles request one long bond page, 8.5 × 13 inches, and retain the five cards, three charts, filters, alerts, and confidentiality context. Actual pagination must be checked in print preview before submission, using the correct paper size and color settings. Browser headers and footers may need to be disabled. No final colored page or verified print artifact is claimed by this draft.
 
 The labeled prototype and this explanation address the Part III design requirements. The final submission still needs its checked colored dashboard page and a verified shareable dashboard link; a local development URL is not a link that an instructor can access remotely. Parts IV and V and the final formatted paper remain separate work.

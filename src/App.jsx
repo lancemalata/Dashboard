@@ -79,6 +79,10 @@ function App() {
       }
     })
   const detailKpi = kpis.find((item) => item.id === detail)
+  const previousPeriod = periods.find((item) => item.order === period.order - 1)
+  const previousMetrics = previousPeriod
+    ? getMetrics(summarize(selectRows(previousPeriod, yearLevel)))
+    : null
 
   function showDetails(id) {
     setDetail(id)
@@ -231,6 +235,11 @@ function App() {
                         ? 'Needs review'
                         : 'Within target'}
                   </div>
+                  <div className="kpi-comparison">
+                    {previousMetrics
+                      ? `${metrics[kpi.id] - previousMetrics[kpi.id] >= 0 ? '+' : '−'}${Math.abs(metrics[kpi.id] - previousMetrics[kpi.id]).toFixed(kpi.unit === 'rating' ? 2 : 1)} ${kpi.unit === 'rating' ? 'points' : 'pp'} vs ${previousPeriod.shortLabel}`
+                      : 'First available sample semester'}
+                  </div>
                   <div className="kpi-target">
                     Target {kpi.targetLabel}
                     <span className="details-hint">
@@ -255,6 +264,38 @@ function App() {
               Finalized scenario · Closed evaluation window · Proposed targets
             </span>
           </div>
+          <section
+            className="review-strip"
+            id="alerts"
+            aria-label="Priorities for review"
+          >
+            <strong className="review-label">
+              <Icon name="alert" size={15} />
+              {warnings.length} review flags
+            </strong>
+            <div className="alert-list" aria-live="polite">
+              {warnings.length ? (
+                warnings.map((warning) => (
+                  <button
+                    key={warning.id}
+                    className="alert-row"
+                    onClick={() => showDetails(warning.id)}
+                    title={warning.action}
+                  >
+                    <span>
+                      <strong>{warning.label}</strong>
+                    </span>
+                    <Icon name="arrow" size={16} />
+                  </button>
+                ))
+              ) : (
+                <span className="empty-state">
+                  All five KPIs meet proposed targets. Continue routine
+                  contextual review.
+                </span>
+              )}
+            </div>
+          </section>
           <div className="chart-grid">
             <section className="panel" id="academic">
               <PanelTitle
@@ -325,9 +366,6 @@ function App() {
                         y2={148 - (tick - 1) * 30}
                         stroke="#eceef1"
                       />
-                      <text x="9" y={152 - (tick - 1) * 30}>
-                        {tick}
-                      </text>
                     </g>
                   ))}
                   <polyline
@@ -352,35 +390,49 @@ function App() {
                         <circle cx={x} cy={y} r="4" fill="#a92b3a">
                           <title>{`${point.shortLabel}: ${point.meanRating.toFixed(2)} / 5 · ${point.responses} completed evaluations`}</title>
                         </circle>
-                        <text
-                          x={x}
-                          y={y - 12}
-                          textAnchor="middle"
-                          className="point-value"
-                        >
-                          {point.meanRating.toFixed(2)}
-                        </text>
-                        <text x={x} y="192" textAnchor="middle">
-                          n = {point.responses.toLocaleString()}
-                        </text>
                       </g>
                     )
                   })}
-                  {trend.map((point, i) => (
-                    <text
-                      key={point.id}
-                      x={
-                        trend.length === 1
-                          ? 324
-                          : 60 + i * (528 / (trend.length - 1))
-                      }
-                      y="174"
-                      textAnchor="middle"
-                    >
-                      {point.shortLabel}
-                    </text>
-                  ))}
                 </svg>
+                <div className="trend-labels" aria-hidden="true">
+                  {[1, 2, 3, 4, 5].map((tick) => (
+                    <span
+                      key={tick}
+                      className="axis-label"
+                      style={{ top: `${(148 - (tick - 1) * 30) / 2}%` }}
+                    >
+                      {tick}
+                    </span>
+                  ))}
+                  {trend.map((point, i) => {
+                    const left = `${(trend.length === 1 ? 324 : 60 + i * (528 / (trend.length - 1))) / 6.4}%`
+                    return (
+                      <div key={point.id}>
+                        <span
+                          className="rating-label"
+                          style={{
+                            left,
+                            top: `${(148 - (point.meanRating - 1) * 30) / 2}%`,
+                          }}
+                        >
+                          {point.meanRating.toFixed(2)}
+                        </span>
+                        <span
+                          className="period-label"
+                          style={{ left, top: '82%' }}
+                        >
+                          {point.shortLabel}
+                        </span>
+                        <span
+                          className="count-label"
+                          style={{ left, top: '93%' }}
+                        >
+                          n = {point.responses.toLocaleString()}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
               <p className="chart-note">
                 Scale: 1–5 · n = completed evaluations · Descriptive trend, not
@@ -391,7 +443,7 @@ function App() {
               <PanelTitle
                 number="03"
                 title="SETE ratings by evaluation dimension"
-                subtitle="Selected semester · five-point rating scale"
+                subtitle="Dimension mean · dashed marker: proposed target 4.00"
               />
               <div
                 className="dimension-chart"
@@ -412,12 +464,11 @@ function App() {
                         <small> / 5</small>
                       </strong>
                     </div>
-                    <div className="bar-track dimension-track">
-                      <div
-                        className="bar-fill"
+                    <div className="dimension-track">
+                      <span
+                        className="dimension-point"
                         style={{
-                          width: `${((summary.dimensionScores[i] ?? 0) / 5) * 100}%`,
-                          background: dimension.color,
+                          left: `${((summary.dimensionScores[i] - 1) / 4) * 100}%`,
                         }}
                       />
                     </div>
@@ -427,42 +478,23 @@ function App() {
                   </div>
                 ))}
               </div>
+              <div className="dimension-axis" aria-hidden="true">
+                <span />{' '}
+                <div>
+                  {[1, 2, 3, 4, 5].map((tick) => (
+                    <span key={tick} style={{ left: `${(tick - 1) * 25}%` }}>
+                      {tick}
+                    </span>
+                  ))}
+                </div>
+                <span />
+              </div>
               <div className="chart-note">
-                Scale: 0–5 · Proposed target ≥ 4.00 ·{' '}
+                Scale: 1–5 · Proposed target ≥ 4.00 ·{' '}
                 {summary.responses.toLocaleString()} completed evaluations
               </div>
             </section>
           </div>
-          <section
-            className="review-strip"
-            id="alerts"
-            aria-label="Priorities for review"
-          >
-            <strong className="review-label">
-              <Icon name="alert" size={15} />
-              {warnings.length} review flags
-            </strong>
-            <div className="alert-list" aria-live="polite">
-              {warnings.length ? (
-                warnings.map((warning) => (
-                  <button
-                    key={warning.id}
-                    className="alert-row"
-                    onClick={() => showDetails(warning.id)}
-                    title={warning.action}
-                  >
-                    {warning.label}
-                    <Icon name="arrow" size={13} />
-                  </button>
-                ))
-              ) : (
-                <span className="empty-state">
-                  All five KPIs meet proposed targets. Continue routine
-                  contextual review.
-                </span>
-              )}
-            </div>
-          </section>
           <div className="context-strip">
             <span>
               <strong>
@@ -479,6 +511,59 @@ function App() {
               student or faculty records are shown.
             </span>
           </div>
+          <details className="dashboard-guide">
+            <summary>Dashboard guide · definitions and interpretation</summary>
+            <section className="help-panel" aria-labelledby="help-title">
+              <div className="section-intro">
+                <span className="eyebrow">HELP AND INTERPRETATION</span>
+                <h2 id="help-title">Understand the dashboard</h2>
+                <p>
+                  Quick answers about the measures, filters, and sample data.
+                </p>
+              </div>
+              <details>
+                <summary>How do I change or reset the reporting scope?</summary>
+                <p>
+                  Choose an academic year, semester, and year level at the top.
+                  The indicators, review flags, and charts update together. Only
+                  available semesters are offered. Reset filters returns to the
+                  first semester of AY 2026–2027 with all year levels included.
+                  The historical chart includes earlier periods through your
+                  selection.
+                </p>
+              </details>
+              <details>
+                <summary>What does academic difficulty mean?</summary>
+                <p>
+                  The rate counts students with at least one finalized failed
+                  course, once per student. It describes recorded outcomes; it
+                  does not predict future failure. Open the KPI details to see
+                  the formula, selected counts, and suggested support action.
+                </p>
+              </details>
+              <details>
+                <summary>How should I interpret SETE ratings?</summary>
+                <p>
+                  SETE means Student Evaluation of Teaching Effectiveness in
+                  this case study. Ratings summarize students' reported
+                  experiences on a five-point scale. Read them alongside
+                  response coverage, course context, and other evidence. They
+                  must not determine personnel decisions by themselves.
+                </p>
+              </details>
+              <details>
+                <summary>Where do these records and targets come from?</summary>
+                <p>
+                  All records are simulated. KPI comparisons use the preceding
+                  sample semester in the same year-level scope; pp means
+                  percentage points. Targets are proposed case-study benchmarks,
+                  not official university standards. Portal–SETE analytics
+                  integration is proposed. No real student identities, faculty
+                  ratings, or evaluation comments are included.
+                </p>
+              </details>
+            </section>
+          </details>
           <footer>
             <span>
               <strong>Simulated data.</strong> · BAT 405 · Mendoza &amp; Malata

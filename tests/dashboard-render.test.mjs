@@ -38,6 +38,14 @@ test('dashboard renders the required five cards, three charts, filters and conte
     assert.ok(html.includes('Details'))
     assert.ok(html.includes('aria-atomic="true"'))
     assert.ok(html.includes('aria-labelledby="kpi-detail-title"'))
+    assert.equal((html.match(/<details>/g) || []).length, 4)
+    assert.ok(html.includes('Understand the dashboard'))
+    assert.equal((html.match(/class="chart-reading"/g) || []).length, 0)
+    assert.ok(!html.includes('class="report-introduction"'))
+    assert.ok(!html.includes('class="program-outlook"'))
+    assert.ok(html.includes('<details class="dashboard-guide"'))
+    assert.equal((html.match(/class="dimension-point"/g) || []).length, 3)
+    assert.ok(html.includes('Scale: 1–5'))
   } finally {
     await server.close()
   }
